@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.kj120.study.mybatis.dao.UserDao">
+    <!-- 自动挡   -->
+    <insert id="add">
+        insert into user(nickname, cate) values (#{user.nickname}, #{user.cate})
+    </insert>
+
+    <!-- 手动档   -->
+    <insert id="addTypeHandler">
+        insert into user(nickname, cate) values (#{user.nickname}, #{user.cate, typeHandler=cn.kj120.study.mybatis.handler.CateTypeHandler})
+    </insert>
+
+
+    <!-- 自动挡   -->
+    <select id="getUserById" resultType="cn.kj120.study.mybatis.domain.User">
+        select * from user where id = #{id}
+    </select>
+
+    <!-- 手动档   -->
+    <resultMap id="UserDetail" type="cn.kj120.study.mybatis.domain.User">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="account" jdbcType="VARCHAR" property="account" />
+        <result column="nickname" jdbcType="VARCHAR" property="nickname" />
+        <result column="mobile" jdbcType="CHAR" property="mobile" />
+        <result column="avatar" jdbcType="VARCHAR" property="avatar" />
+        <result column="password" jdbcType="VARCHAR" property="password" />
+        <!--  cate 字段存储的json文本 需要指定typeHandler      -->
+        <result column="cate" jdbcType="VARCHAR" property="cate" typeHandler="cn.kj120.study.mybatis.handler.CateTypeHandler" />
+    </resultMap>
+
+    <select id="getUserByIdTypeHandler" resultMap="UserDetail">
+        select * from user where id = #{id}
+    </select>
+
+</mapper>

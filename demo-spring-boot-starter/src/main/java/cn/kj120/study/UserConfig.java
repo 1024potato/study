@@ -2,7 +2,9 @@ package cn.kj120.study;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 @ConfigurationProperties(prefix = "potato")
 public class UserConfig {
