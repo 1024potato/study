@@ -1,0 +1,1 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=cn.kj120.study.expiration.spring.cache.starter.CacheConfig
