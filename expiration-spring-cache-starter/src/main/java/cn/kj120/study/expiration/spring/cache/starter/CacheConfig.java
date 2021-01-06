@@ -32,7 +32,6 @@ import java.util.Map;
  */
 @Configuration
 @EnableCaching
-//@ConditionalOnProperty(prefix = "spring.redis", matchIfMissing = true)
 @EnableConfigurationProperties(Cache.class)
 public class CacheConfig {
 
@@ -89,7 +88,7 @@ public class CacheConfig {
         @Override
         protected RedisCache createRedisCache(String name, RedisCacheConfiguration cacheConfig) {
             log.info("缓存的key: {} ", name);
-            String[] redisKeyArray = StringUtils.delimitedListToStringArray(name, cache.getDelimiter());
+            String[] redisKeyArray = StringUtils.delimitedListToStringArray(name, cache.getDelimiter()          );
             name = redisKeyArray[0] + ":";
             // 设置过期时间单位秒
             if (redisKeyArray.length > 1){
