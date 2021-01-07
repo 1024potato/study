@@ -6,8 +6,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
@@ -88,7 +86,7 @@ public class CacheConfig {
         @Override
         protected RedisCache createRedisCache(String name, RedisCacheConfiguration cacheConfig) {
             log.info("缓存的key: {} ", name);
-            String[] redisKeyArray = StringUtils.delimitedListToStringArray(name, cache.getDelimiter()          );
+            String[] redisKeyArray = StringUtils.delimitedListToStringArray(name, cache.getDelimiter());
             name = redisKeyArray[0] + ":";
             // 设置过期时间单位秒
             if (redisKeyArray.length > 1){

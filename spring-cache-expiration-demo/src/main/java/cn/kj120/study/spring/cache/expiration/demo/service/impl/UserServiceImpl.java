@@ -21,13 +21,10 @@ public class UserServiceImpl {
         userMap.put(4 , new User(4, "卡二"));
     }
 
-    @Cacheable(value = "user", key = "#id")
+    @Cacheable(value = "user#5m", key = "#id")
     public User find(Integer id) {
-
         User user = userMap.get(id);
-
         log.info("查询到用户 {}", user);
-
         return user;
     }
 }
