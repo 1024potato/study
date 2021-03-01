@@ -1,4 +1,4 @@
-package cn.kj120.study.net.expiration.spring.cache.starter;
+package cn.kj120.study.expiration.spring.cache.starter;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
