@@ -66,30 +66,16 @@ public class NioClient {
                     if (key.isConnectable()) {
 
                         socketChannel = (SocketChannel) key.channel();
+                        if (socketChannel.isConnectionPending()) {
+                            socketChannel.finishConnect();
 
-                        socketChannel.finishConnect();
+                            log.info("客户端已经连接");
+
+                            new Thread(new ClientInputHandler(socketChannel, charset)).start();
+                        }
 
                         // 注册读事件到selector
                         socketChannel.register(selector, SelectionKey.OP_READ);
-
-                        log.info("客户端已经连接");
-
-                        Scanner scanner = new Scanner(System.in);
-
-                        while (true) {
-                            if (scanner.hasNext()) {
-                                String next = scanner.next();
-                                ByteBuffer byteBuffer = charset.encode(next);
-                                byteBuffer.flip();
-
-                                try {
-                                    socketChannel.write(byteBuffer);
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        }
-
                     } else if (key.isReadable()) {
                         // 获取触发事件的socket
                         socketChannel = (SocketChannel) key.channel();
@@ -101,6 +87,7 @@ public class NioClient {
                         byteBuffer.flip();
 
                         String msg = charset.decode(byteBuffer).toString();
+
 
                         System.out.println(msg);
 

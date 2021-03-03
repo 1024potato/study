@@ -34,7 +34,7 @@ public class NioServer {
     /**
      * 存放在线客户端集合
      */
-    private Map<String, BufferedWriter> writerMap = new ConcurrentHashMap<>();
+    private Map<String, SocketChannel> writerMap = new ConcurrentHashMap<>();
 
     /**
      * 生成uid
@@ -65,16 +65,16 @@ public class NioServer {
         try {
             ServerSocketChannel serverSocketChannel = ServerSocketChannel.open();
 
+            serverSocketChannel.configureBlocking(false);
+
             // 绑定指定端口
             serverSocketChannel.bind(new InetSocketAddress(port));
 
-            serverSocketChannel.configureBlocking(false);
 
             selector = Selector.open();
 
             serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
 
-            UidSocketOption<String> uidSocketOption = new UidSocketOption("uid", String.class);
 
             while (true) {
 
@@ -93,11 +93,12 @@ public class NioServer {
                         // 接收连接的socket
                         SocketChannel socketChannel = serverSocketChannel.accept();
 
-                        socketChannel.setOption(uidSocketOption, uid);
+                        socketChannel.configureBlocking(false);
 
                         // 注册读事件到selector
                         socketChannel.register(selector, SelectionKey.OP_READ);
 
+                        writerMap.put(uid, socketChannel);
                         log.info("客户端[{}]已经连接, 当前客户端总数[{}]", uid, writerMap.size());
                     } else if (key.isReadable()) {
                         // 获取触发事件的socket
@@ -105,15 +106,29 @@ public class NioServer {
 
                         byteBuffer.clear();
 
-                        socketChannel.write(byteBuffer);
+                        while (socketChannel.read(byteBuffer) > 0) {
+                            socketChannel.read(byteBuffer);
+                        }
 
                         byteBuffer.flip();
 
-                        String uid = socketChannel.getOption(uidSocketOption);
+
 
                         String msg = charset.decode(byteBuffer).toString();
 
-                        log.info("客户端[{}]: {}", uid, msg);
+                        String[] split = msg.split(":");
+
+                        String toUid = split[0];
+
+                        SocketChannel channel = writerMap.get(toUid);
+
+                        ByteBuffer byteBuffer = charset.encode("客户端[]: " + split[1]);
+
+                        while (byteBuffer.hasRemaining()) {
+                            channel.write(byteBuffer);
+                        }
+
+                        log.info("客户端[{}]: {}", toUid, msg);
 
                     }
                 }
@@ -128,8 +143,8 @@ public class NioServer {
     }
 
     public static void main(String[] args) {
-        BioServer bioServer = new BioServer();
+        NioServer nioServer = new NioServer();
 
-        bioServer.start();
+        nioServer.start();
     }
 }
