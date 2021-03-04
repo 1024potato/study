@@ -9,12 +9,14 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.StandardSocketOptions;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.nio.charset.Charset;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -82,8 +84,11 @@ public class NioServer {
 
                 Set<SelectionKey> keys = selector.selectedKeys();
 
-                for (SelectionKey key : keys) {
+                Iterator<SelectionKey> iterator = keys.iterator();
 
+                while (iterator.hasNext()) {
+                    SelectionKey key = iterator.next();
+                    iterator.remove();
                     if (key.isAcceptable()) {
                         // 生成连接客户端唯一id
                         String uid = String.valueOf(atomicInteger.incrementAndGet());
@@ -113,7 +118,6 @@ public class NioServer {
                         byteBuffer.flip();
 
 
-
                         String msg = charset.decode(byteBuffer).toString();
 
                         String[] split = msg.split(":");
@@ -122,19 +126,26 @@ public class NioServer {
 
                         SocketChannel channel = writerMap.get(toUid);
 
-                        ByteBuffer byteBuffer = charset.encode("客户端[]: " + split[1]);
+                        if (channel == null) {
+                            String errorMsg = String.format("客户端[%s]已经下线", toUid);
+                            log.warn(errorMsg);
+                            socketChannel.write(charset.encode(errorMsg));
+                        } else {
+                            ByteBuffer byteBuffer = charset.encode(msg);
 
-                        while (byteBuffer.hasRemaining()) {
-                            channel.write(byteBuffer);
+                            while (byteBuffer.hasRemaining()) {
+                                channel.write(byteBuffer);
+                            }
                         }
 
-                        log.info("客户端[{}]: {}", toUid, msg);
+
+
+                        log.info("客户端[{}]: {}", split[0], msg);
 
                     }
                 }
 
 
-                keys.clear();
             }
 
         } catch (IOException e) {
