@@ -94,7 +94,7 @@ public class BioClient {
     }
 
     public static void main(String[] args) throws IOException {
-        BioClient bioClient = new BioClient("localhost", 8001);
+        BioClient bioClient = new BioClient("localhost", 8318);
 
         bioClient.start();
     }
