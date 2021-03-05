@@ -6,7 +6,7 @@ import java.nio.channels.AsynchronousSocketChannel;
 
 public class AioClient {
 
-    private int port = 8318;
+    private int port = 8320;
 
     private String host = "localhost";
 
