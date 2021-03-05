@@ -1,4 +1,4 @@
-package cn.kj120.study.net.io.bio;
+package cn.kj120.study.io.bio;
 
 import cn.kj120.study.net.entity.Message;
 import lombok.extern.slf4j.Slf4j;

@@ -1,4 +1,4 @@
-package cn.kj120.study.net.io.netty;
+package cn.kj120.study.io.netty;
 
 import io.netty.channel.*;
 import io.netty.handler.codec.string.StringDecoder;

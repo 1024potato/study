@@ -9,8 +9,7 @@
   <packaging>pom</packaging>
   <version>1.0-SNAPSHOT</version>
   <modules>
-    <module>spring-mv-mini</module>
-      <module>spring-mvc</module>
+    <module>spring-mvc-mini</module>
     <module>demo-spring-boot-starter</module>
       <module>java-net</module>
   </modules>

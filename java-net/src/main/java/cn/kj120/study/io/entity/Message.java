@@ -1,4 +1,4 @@
-package cn.kj120.study.net.io.entity;
+package cn.kj120.study.io.entity;
 
 import lombok.Data;
 
