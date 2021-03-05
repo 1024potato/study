@@ -31,7 +31,7 @@ public class AcceptCompletionHandler implements CompletionHandler<AsynchronousSo
 
         channelMap.put(uid, client);
 
-        log.info("客户端[{}]已上线, 当前在线客户端[{}]", uid, channelMap.size());
+        log.info("客户端[{}]已上线, 当前在线客户端数量[{}]", uid, channelMap.size());
 
         if (serverSocketChannel.isOpen()) {
             serverSocketChannel.accept(null, new AcceptCompletionHandler(serverSocketChannel, atomicInteger, channelMap));

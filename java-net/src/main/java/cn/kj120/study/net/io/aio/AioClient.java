@@ -10,15 +10,28 @@ public class AioClient {
 
     private String host = "localhost";
 
-    public void start() throws IOException {
-        AsynchronousSocketChannel socketChannel = AsynchronousSocketChannel.open();
+    public void start() {
+        try {
+            AsynchronousSocketChannel socketChannel = AsynchronousSocketChannel.open();
 
-        socketChannel.connect(
-                new InetSocketAddress(host, port),
-                null,
-                new ConnectCompletionHandler(socketChannel)
-        );
+            socketChannel.connect(
+                    new InetSocketAddress(host, port),
+                    null,
+                    new ConnectCompletionHandler(socketChannel)
+            );
 
+            while (true) {
+                Thread.sleep(5);
+            }
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
 
+    }
+
+    public static void main(String[] args) {
+        AioClient aioClient = new AioClient();
+
+        aioClient.start();
     }
 }

@@ -3,15 +3,12 @@ package cn.kj120.study.net.io.aio;
 import cn.kj120.study.net.io.entity.Message;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.channels.CompletionHandler;
 import java.nio.charset.Charset;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 @Slf4j
 public class ReadCompletionHandler implements CompletionHandler<Integer, ByteBuffer> {
@@ -41,6 +38,8 @@ public class ReadCompletionHandler implements CompletionHandler<Integer, ByteBuf
 
         Message message = receive(string);
 
+        log.info(message.toString());
+
         if (message == null) {
             return;
         }
@@ -57,25 +56,26 @@ public class ReadCompletionHandler implements CompletionHandler<Integer, ByteBuf
             AsynchronousSocketChannel socketChannel = channelMap.get(message.getToUid());
             if (socketChannel == null) {
                 log.warn("消息接收客户端[{}]已经下线", message.getToUid());
+            } else {
+                socketChannel.write(buffer);
             }
-            Future<Integer> future = socketChannel.write(byteBuffer);
-
-            try {
-                future.get(5, TimeUnit.SECONDS);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            } catch (TimeoutException e) {
-                e.printStackTrace();
-            }
-
         }
+
+        // 继续读取下一次接收到的数据
+        byteBuffer.clear();
+
+        client.read(byteBuffer, byteBuffer, this);
 
     }
 
     @Override
     public void failed(Throwable exc, ByteBuffer byteBuffer) {
+        channelMap.remove(uid);
+        try {
+            client.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         log.error("读取消息异常", exc);
     }
 
@@ -99,7 +99,7 @@ public class ReadCompletionHandler implements CompletionHandler<Integer, ByteBuf
         message.setToUid(toUid);
         message.setContent(split[1]);
 
-        Integer type = toUid == 0 ? 1 : 0;
+        Integer type = toUid == 0 ? 0 : 1;
 
         message.setType(type);
 
