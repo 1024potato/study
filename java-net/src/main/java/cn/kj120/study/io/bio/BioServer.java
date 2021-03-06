@@ -25,7 +25,7 @@ public class BioServer {
     /**
      * 存放在线客户端集合
      */
-    private Map<String, BufferedWriter> writerMap = new ConcurrentHashMap<>();
+    private Map<Integer, BufferedWriter> writerMap = new ConcurrentHashMap<>();
 
     /**
      * 生成uid
@@ -60,7 +60,7 @@ public class BioServer {
                 Socket socket = serverSocket.accept();
 
                 // 生产连接客户端唯一id
-                String uid = String.valueOf(atomicInteger.incrementAndGet());
+                Integer uid = atomicInteger.incrementAndGet();
 
                 // 处理消息的收发
                 executor.execute(new MessageHandler(uid, writerMap, socket));

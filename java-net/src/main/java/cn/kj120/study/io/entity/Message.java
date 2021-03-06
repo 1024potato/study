@@ -15,4 +15,13 @@ public class Message {
     private Integer type;
 
     private String content;
+
+    public Message() {
+    }
+
+    public Message(Integer fromUid, Integer toUid, String content) {
+        this.fromUid = fromUid;
+        this.toUid = toUid;
+        this.content = content;
+    }
 }

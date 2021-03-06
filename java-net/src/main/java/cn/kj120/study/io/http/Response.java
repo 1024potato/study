@@ -17,6 +17,8 @@ public class Response {
 
     private String body;
 
+    private final String ENTER = "\n";
+
 
     public String getHeader(String name) {
         return headerMap.get(name);
@@ -31,6 +33,22 @@ public class Response {
     }
 
     public String httpReturn() {
-        return null;
+        StringBuilder sb = new StringBuilder();
+        sb.append(version)
+                .append(" ")
+                .append(code)
+                .append(" OK")
+                .append(ENTER);
+        for (Map.Entry<String, String> entry : headerMap.entrySet()) {
+            sb.append(entry.getKey())
+                    .append(": ")
+                    .append(entry.getValue())
+                    .append(ENTER);
+        }
+
+        sb.append(ENTER);
+        sb.append(body);
+
+        return sb.toString();
     }
 }

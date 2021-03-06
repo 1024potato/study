@@ -10,6 +10,7 @@ import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.nio.charset.Charset;
+import java.util.Random;
 import java.util.Set;
 
 @Slf4j
@@ -64,7 +65,14 @@ public class HttpServer {
 
                     SocketChannel channel = (SocketChannel) key.channel();
 
-                    String message = "";
+
+                    byteBuffer.clear();
+
+                    while (channel.read(byteBuffer) > 0) {
+
+                    }
+                    byteBuffer.flip();
+                    String message = charset.decode(byteBuffer).toString();
 
                     Request request = new Request(message);
 
@@ -75,14 +83,25 @@ public class HttpServer {
 
                     SocketChannel channel = (SocketChannel) key.channel();
 
+                    Request request = (Request) key.attachment();
+
                     Response response = new Response();
+
+                    response.setCode(200);
+                    response.setVersion("HTTP/1.1");
+
+                    response.setHeader("Content-Type", "application/json;charset=UTF-8");
+
+                    int i = new Random().nextInt(9999);
+
+                    response.setBody(String.format("{\"name\":\"pcg\", \"age\": %s}", i));
 
                     String result = response.httpReturn();
 
                     ByteBuffer encode = charset.encode(result);
 
                     while (encode.hasRemaining()) {
-                        channel.write(byteBuffer);
+                        channel.write(encode);
                     }
                     channel.close();
                 }
@@ -90,6 +109,12 @@ public class HttpServer {
 
             keys.clear();
         }
+    }
+
+    public static void main(String[] args) throws IOException {
+        HttpServer httpServer = new HttpServer();
+
+        httpServer.start();
     }
 
 }

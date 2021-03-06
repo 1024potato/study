@@ -1,6 +1,6 @@
 package cn.kj120.study.io.bio;
 
-import cn.kj120.study.net.entity.Message;
+import cn.kj120.study.io.entity.Message;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.*;
@@ -10,9 +10,9 @@ import java.util.Map;
 @Slf4j
 public class MessageHandler implements Runnable {
 
-    private String uid;
+    private Integer uid;
 
-    private Map<String, BufferedWriter> writerMap;
+    private Map<Integer, BufferedWriter> writerMap;
 
     private Socket socket;
 
@@ -20,7 +20,7 @@ public class MessageHandler implements Runnable {
 
     private static final String ALL_CONTENT = "all";
 
-    public MessageHandler(String uid, Map<String, BufferedWriter> writerMap, Socket socket) {
+    public MessageHandler(Integer uid, Map<Integer, BufferedWriter> writerMap, Socket socket) {
         this.uid = uid;
         this.writerMap = writerMap;
         this.socket = socket;
@@ -78,13 +78,13 @@ public class MessageHandler implements Runnable {
      * @param formUid
      * @return
      */
-    public Message receive(String msg, String formUid) {
+    public Message receive(String msg, Integer formUid) {
         String[] s = msg.split(":");
         if (s.length != 2) {
             log.info("消息格式错误 {}", msg);
             return null;
         }
-        Message message = new Message(formUid, s[0], s[1]);
+        Message message = new Message(formUid, Integer.valueOf(s[0]), s[1]);
         log.info("接收到的消息: {}", message);
         return message;
     }
@@ -95,10 +95,10 @@ public class MessageHandler implements Runnable {
      * @throws IOException
      */
     public void sendAll(Message message) throws IOException {
-        for (Map.Entry<String, BufferedWriter> entry : writerMap.entrySet()) {
-            if (!message.getFormUid().equals(entry.getKey())) {
+        for (Map.Entry<Integer, BufferedWriter> entry : writerMap.entrySet()) {
+            if (!message.getFromUid().equals(entry.getKey())) {
                 BufferedWriter writer = entry.getValue();
-                writerAndFlush(writer, message.getWriteMessage());
+                writerAndFlush(writer, message.getContent());
             }
         }
     }
@@ -113,10 +113,10 @@ public class MessageHandler implements Runnable {
         if (writer == null) {
             String noticeMsg = String.format("客户端[%s]已经断开连接", message.getToUid());
             log.warn(noticeMsg);
-            writerAndFlush(writerMap.get(message.getFormUid()), noticeMsg);
+            writerAndFlush(writerMap.get(message.getFromUid()), noticeMsg);
 
         } else {
-            writerAndFlush(writer, message.getWriteMessage());
+            writerAndFlush(writer, message.getContent());
         }
 
     }
