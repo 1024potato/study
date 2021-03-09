@@ -2,6 +2,7 @@ package cn.kj120.study.io.http;
 
 import lombok.Data;
 
+import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -18,6 +19,8 @@ public class Response {
     private String body;
 
     private final String ENTER = "\n";
+
+    private OutputStream outputStream;
 
 
     public String getHeader(String name) {

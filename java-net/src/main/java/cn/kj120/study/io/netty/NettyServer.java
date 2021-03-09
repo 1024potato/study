@@ -1,6 +1,7 @@
 package cn.kj120.study.io.netty;
 
 import io.netty.bootstrap.ServerBootstrap;
+import io.netty.channel.ChannelFuture;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
@@ -19,14 +20,19 @@ public class NettyServer {
         ServerBootstrap serverBootstrap = new ServerBootstrap();
 
         try {
-            serverBootstrap.channel(NioServerSocketChannel.class)
+            ChannelFuture channelFuture = serverBootstrap.channel(NioServerSocketChannel.class)
                     .group(boss, work)
                     .childHandler(new CustomChannelHandler())
                     .localAddress(port)
                     .bind()
                     .sync();
+
+            channelFuture.channel().closeFuture().sync();
+
         } catch (InterruptedException e) {
             e.printStackTrace();
+            boss.shutdownGracefully();
+            work.shutdownGracefully();
         }
 
     }

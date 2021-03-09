@@ -2,6 +2,10 @@ package cn.kj120.study.io.http;
 
 import lombok.Data;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -21,10 +25,12 @@ public class Request {
 
     private Map<String, String> parameterMap = new HashMap<>();
 
+    private InputStream inputStream = new ByteArrayInputStream(new byte[2048]);
+
     private String body = "";
 
     public Request(String message) {
-        if (message == null) {
+        if (message == null || "".equals(message)) {
             return;
         }
         String[] split = message.split("\n");
@@ -91,91 +97,15 @@ public class Request {
     }
 
     public static void main(String[] args) {
-        String msg = "POST http://app-test.qizhidao.com/qzd-bff-pcweb/project/findShopResult HTTP/1.1\n" +
-                "User-Agent: X/21233222\n" +
-                "accessToken: eyJhbGciOiJIUzUxMiJ9.ZXlKNmFYQWlPaUpFUlVZaUxDSmhiR2NpT2lKa2FYSWlMQ0psYm1NaU9pSkJNVEk0UTBKRExVaFRNalUySW4wLi5tdGVXUVFodGxFNi1Na05YVFpfTHJRLnZJZ2t4cDZIYVNXa1RLdGkxZUtxcXd1aG9mNWVZQmZMcC1Vc05ZSG9jMHRZVWhtWVkzZGx6QTBIMjJmOE1mdVlsTHg5RzB3RmNJYkh6SF9ST3d2cWprWHJ6RHA5dmxRR3FNa2VJZmpiY1l3eFNjQ1ltZ2c3Yk1pVE1XY0c3SVBzNEJ2X3E5MkVFN2VYemxTN0NQR0hrNWRoYkx1TklFMmRfRjlta2xRRGtYekU2d3doMzF2VFc1S3J4Q1ZsYjU3VG9QN2hURjlPQXkzTHBwRGNybVVnaHh3MUxYTHltaHBiT2N4anNaeEhsSno0c29rMVBQcEhOQzdGQktBNGJVaHoxdGUxNTQxQXM3bkE1MTdRdVZ1SnhTcUNPemM2YVNUVGZBZHB3NDZnR214dXdaVVJ1RV82eXM1R1ZneEpUS0tXLmM0RVJia19DYmN4aFZ4QjY4TDJDWVE.q3X5Zr8hem2MtEkLZ82XiDUviL1LiJCS2jsLktacA7dltGwRRepVUXGEPbI5ZTPW7Bbj7rBHRDwpHsJj9OybZw\n" +
-                "signature: admin.123456\n" +
-                "Content-Type: application/json\n" +
-                "Accept: */*\n" +
-                "Cache-Control: no-cache\n" +
-                "Postman-Token: bd2eb018-2beb-4b42-af55-5279312b468d\n" +
-                "Host: app-test.qizhidao.com\n" +
-                "Accept-Encoding: gzip, deflate, br\n" +
-                "Connection: keep-alive\n" +
-                "Content-Length: 1506\n" +
-                "\n" +
-                "{\n" +
-                "    \"project_lists\": [\n" +
-                "        {\n" +
-                "            \"prob\": 0.5,\n" +
-                "            \"project_id\": \"336546603777130496\",\n" +
-                "            \"subsidy\": [\n" +
-                "                27.483801246488778,\n" +
-                "                32.5\n" +
-                "            ]\n" +
-                "        },\n" +
-                "        {\n" +
-                "            \"prob\": 0.5,\n" +
-                "            \"project_id\": \"332863668130680832\",\n" +
-                "            \"subsidy\": [\n" +
-                "                0.0,\n" +
-                "                0.0\n" +
-                "            ]\n" +
-                "        },\n" +
-                "        {\n" +
-                "            \"prob\": 0.5,\n" +
-                "            \"project_id\": \"333561265820536832\",\n" +
-                "            \"subsidy\": [\n" +
-                "                0.0,\n" +
-                "                0.0\n" +
-                "            ]\n" +
-                "        },\n" +
-                "        {\n" +
-                "            \"prob\": 0.5,\n" +
-                "            \"project_id\": \"333564720807153664\",\n" +
-                "            \"subsidy\": [\n" +
-                "                0.0,\n" +
-                "                0.0\n" +
-                "            ]\n" +
-                "        },\n" +
-                "        {\n" +
-                "            \"prob\": 0.5,\n" +
-                "            \"project_id\": \"332848417955909632\",\n" +
-                "            \"subsidy\": [\n" +
-                "                0.0,\n" +
-                "                0.0\n" +
-                "            ]\n" +
-                "        },\n" +
-                "        {\n" +
-                "            \"prob\": 0.5,\n" +
-                "            \"project_id\": \"331130754107969536\",\n" +
-                "            \"subsidy\": [\n" +
-                "                0.0,\n" +
-                "                0.0\n" +
-                "            ]\n" +
-                "        },\n" +
-                "        {\n" +
-                "            \"prob\": 0.5,\n" +
-                "            \"project_id\": \"336546603617746944\",\n" +
-                "            \"subsidy\": [\n" +
-                "                0.0,\n" +
-                "                0.0\n" +
-                "            ]\n" +
-                "        },\n" +
-                "        {\n" +
-                "            \"prob\": 0.5,\n" +
-                "            \"project_id\": \"310838019807514624\",\n" +
-                "            \"subsidy\": [\n" +
-                "                0.0,\n" +
-                "                0.0\n" +
-                "            ]\n" +
-                "        }\n" +
-                "    ]\n" +
-                "}";
 
-        Request request = new Request(msg);
+        Charset charset = Charset.forName("utf-8");
 
-        System.err.println(request);
+        ByteBuffer encode = charset.encode("腾通通（深圳）科技企业");
+        ByteBuffer encode1 = charset.encode("测试1");
+        ByteBuffer encode2 = charset.encode("测试1a");
+        System.err.println(encode);
+        System.err.println(encode1);
+        System.err.println(encode2);
     }
 
 }

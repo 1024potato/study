@@ -13,6 +13,6 @@ public class CustomChannelHandler extends ChannelInitializer {
         channel.pipeline()
                 .addLast(new StringEncoder())
                 .addLast(new StringDecoder())
-                .addLast(new ImSimpleChannelInboundHandler());
+                .addLast(new ServerChannelInboundHandler());
     }
 }
